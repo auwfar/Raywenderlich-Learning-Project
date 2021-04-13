@@ -1,4 +1,4 @@
 # Simple Work Manager
 This app will show you how to chain work managers in image processing. Starting from downloading image to filtering and rendering the image
 
-https://user-images.githubusercontent.com/19502564/114516063-3d5cf980-9c67-11eb-9cb1-cf72fbb0fc89.mp4
+![ezgif-7-2b6dadc42ea9](https://user-images.githubusercontent.com/19502564/114516305-785f2d00-9c67-11eb-815b-1cedc0e73f9a.gif)
