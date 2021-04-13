@@ -3,6 +3,7 @@ package com.auwfar.simpleworkmanager.ui
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.core.view.isVisible
 import androidx.work.Constraints
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
@@ -22,32 +23,33 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        showLoading(true)
         downloadImage()
     }
 
     private fun downloadImage() {
         val constraints = Constraints.Builder()
-                .setRequiresBatteryNotLow(true)
-                .setRequiresStorageNotLow(true)
-                .setRequiredNetworkType(NetworkType.NOT_ROAMING)
-                .build()
+            .setRequiresBatteryNotLow(true)
+            .setRequiresStorageNotLow(true)
+            .setRequiredNetworkType(NetworkType.NOT_ROAMING)
+            .build()
 
         val fileClearWorker = OneTimeWorkRequestBuilder<FileClearWorker>()
-                .build()
+            .build()
 
         val downloadWorker = OneTimeWorkRequestBuilder<DownloadWorker>()
-                .setConstraints(constraints)
-                .build()
+            .setConstraints(constraints)
+            .build()
 
         val sepiaFilterWorker = OneTimeWorkRequestBuilder<SepiaFilterWorker>()
-                .setConstraints(constraints)
-                .build()
+            .setConstraints(constraints)
+            .build()
 
         val workManager = WorkManager.getInstance(this)
         workManager.beginWith(fileClearWorker)
-                .then(downloadWorker)
-                .then(sepiaFilterWorker)
-                .enqueue()
+            .then(downloadWorker)
+            .then(sepiaFilterWorker)
+            .enqueue()
 
         workManager.getWorkInfoByIdLiveData(sepiaFilterWorker.id).observe(this, { info ->
             if (info.state.isFinished) {
@@ -65,10 +67,16 @@ class MainActivity : AppCompatActivity() {
             val bitmap = loadImageFromFile(imagePath)
 
             image.setImageBitmap(bitmap)
+            showLoading(false)
         }
     }
 
     private suspend fun loadImageFromFile(imagePath: String) = withContext(Dispatchers.IO) {
         BitmapFactory.decodeFile(imagePath)
+    }
+
+    private fun showLoading(isShow: Boolean) {
+        loading.isVisible = isShow
+        image.isVisible = !isShow
     }
 }
